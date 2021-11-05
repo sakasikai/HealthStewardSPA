@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.healthsteward.mapper.user.ClientMapper">
+
+    <sql id="clientProps">
+        user_id as "userId",
+        username as "username",
+        nickname as "nickname",
+        age as "age",
+        gender as "gender",
+        id_number as "idNumber",
+        type as "type",
+        file_number as "fileNumber",
+        phone as "phone",
+        birthday as "birthday",
+        height as "height",
+        weight as "weight",
+        blood_type as "bloodType",
+        remark as "remark",
+        image as "image"
+    </sql>
+
+    <!--  2. Client  -->
+    <insert id="insertClient" parameterType="Client">
+        INSERT INTO client(username, nickname, user_id)
+        VALUES(#{username}, #{nickname}, #{userId})
+    </insert>
+
+    <select id="getClientById"  parameterType="int" resultType="Client">
+        select
+        <include refid="clientProps">
+        </include>
+        from client where user_id = #{userId}
+    </select>
+
+    <select id="getNickNameById" parameterType="int" resultType="String">
+		select nickname
+		from client where user_id = #{userId}
+	</select>
+
+    <update id="updateImageById" parameterType="Client">
+        UPDATE client
+        SET
+        image = #{image}
+        WHERE
+        user_id = #{userId}
+    </update>
+
+</mapper>

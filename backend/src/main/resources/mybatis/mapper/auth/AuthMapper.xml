@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.healthsteward.mapper.auth.AuthMapper">
+
+    <!--  1. Auth  -->
+    <insert id="insertAuth" parameterType="Authentication">
+        INSERT INTO authentication(username, password_in_db, salt, user_id)
+        VALUES(#{userName}, #{passwordInDB}, #{salt}, #{userId})
+    </insert>
+
+    <delete id="deleteAuth" parameterType="String">
+        DELETE FROM authentication WHERE username = #{userName}
+    </delete>
+
+    <update id="updateAuth" parameterType="Authentication">
+        UPDATE authentication
+        SET
+        password_in_db = #{passwordInDB},
+        salt = #{salt}
+        WHERE
+        username = #{userName}
+    </update>
+
+    <select id="getAuthByName"  parameterType="string" resultType="Authentication">
+		select username, password_in_db, salt, user_id from authentication where username = #{userName}
+	</select>
+
+</mapper>

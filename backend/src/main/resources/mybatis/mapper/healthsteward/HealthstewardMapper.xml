@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.healthsteward.mapper.healthsteward.HealthStewardMapper">
+
+    <sql id="applyItemProps">
+        apply_item_id as applyItemId,
+        client_id as clientId,
+        time_stamp as timeStamp,
+        apply_note as applyNote,
+        flow_level as flowLevel
+    </sql>
+
+	<insert id="insertApplyItem" parameterType="map">
+        INSERT INTO apply_item(client_id, time_stamp, apply_note, flow_level)
+        VALUES(#{clientId}, #{timeStamp}, #{applyNote}, #{flowLevel})
+    </insert>
+
+    <delete id="deleteApplyItemById">
+        DELETE FROM apply_item
+        WHERE client_id = #{clientId}
+    </delete>
+
+    <update id="updateFlowLevelByClientId" parameterType="int">
+        UPDATE apply_item
+        SET flow_level = #{flowLevel}
+        WHERE client_id = #{clientId}
+    </update>
+
+    <select id="getApplyItemByClientId"  parameterType="int" resultType="ApplyItem">
+        select
+        <include refid="applyItemProps" />
+        from apply_item
+        where client_Id = #{clientId}
+	</select>
+
+    <select id="listApplyItems"  parameterType="int" resultType="ApplyItem">
+        select
+        <include refid="applyItemProps" />
+        from apply_item
+        <if test="allLifeCircle == false" >
+            where flow_level &lt; 3
+        </if>
+    </select>
+
+
+    <!-- 2. 权限管理  -->
+</mapper>

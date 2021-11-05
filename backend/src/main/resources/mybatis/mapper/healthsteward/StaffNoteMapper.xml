@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.healthsteward.mapper.healthsteward.StaffNoteMapper">
+
+    <sql id="staffNoteProps">
+        note_id as noteId,
+        client_id as clientId,
+        staff_id as staffId,
+        time_stamp as timeStamp,
+        staff_note as staffNote,
+        contract_id as contractId
+    </sql>
+
+    <sql id="db">
+        <if test="noteTypeOrdinal==0">
+            signed_note
+        </if>
+        <if test="noteTypeOrdinal==1">
+            talking_note
+        </if>
+    </sql>
+
+    <!-- 对contract_id这个外键的约定：只在insert,delete时涉及，其他操作一律不涉及 -->
+	<insert id="insertStaffNote" parameterType="map">
+        INSERT INTO <include refid="db" />(client_id, staff_id, staff_note, time_stamp, contract_id)
+        VALUES(#{clientId}, #{staffId}, #{staffNote}, DATE_FORMAT(#{timeStamp}, '%Y-%m-%d %H:%i:%S'), #{contractId})
+    </insert>
+
+    <delete id="deleteStaffNote">
+        DELETE FROM
+        <include refid="db" />
+        WHERE note_id = #{noteId}
+    </delete>
+
+    <update id="updateStaffNote" parameterType="map">
+        UPDATE
+        <include refid="db" />
+        SET staff_note = #{staffNote}, time_stamp = DATE_FORMAT(#{timeStamp}, '%Y-%m-%d %H:%i:%S')
+        WHERE staff_id = #{staffId} AND client_id = #{clientId} AND note_id = #{noteId}
+    </update>
+
+    <select id="listStaffNote" resultType="StaffNote">
+        select
+        <include refid="staffNoteProps" />
+        from
+        <include refid="db" />
+        where staff_id = #{staffId}
+        <if test="clientId != null" >
+            AND client_id = #{clientId}
+        </if>
+    </select>
+
+    <select id="getStaffNoteId" resultType="Integer">
+        select note_id
+        from
+        <include refid="db" />
+        where staff_id = #{staffId} AND client_id = #{clientId}
+        AND DATE_FORMAT(time_stamp, '%Y-%m-%d %H:%i:%S') = DATE_FORMAT(#{timeStamp}, '%Y-%m-%d %H:%i:%S')
+    </select>
+
+    <select id="getStaffNoteById" resultType="StaffNote">
+        select <include refid="staffNoteProps" />
+        from
+        <include refid="db" />
+        where staff_id = #{staffId} AND client_id = #{clientId} AND note_id = #{noteId}
+    </select>
+</mapper>

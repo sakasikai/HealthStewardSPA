@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.healthsteward.mapper.healthsteward.ContractLinkMapper">
+
+    <sql id="contractLinkProps">
+        contract_id as "contractId",
+        client_id as "clientId",
+        staff_id as "staffId",
+        client_confirm as "clientConfirm",
+        staff_confirm as "staffConfirm",
+        creation_time_stamp as "creationTimeStamp",
+        result_time_stamp as "resultTimeStamp",
+        contract_state as "contractState",
+        result_comment as "resultComment",
+        managed_state as "managedState"
+    </sql>
+
+    <insert id="insertContractLink" parameterType="ApplyItem">
+        INSERT INTO health_steward_contract(client_id, staff_id, creation_time_stamp)
+        VALUES(#{clientId}, #{staffId}, #{timeStamp})
+    </insert>
+
+    <delete id="deleteContractLink">
+        DELETE FROM health_steward_contract
+        WHERE client_id = #{clientId} AND staff_id = #{staffId}
+    </delete>
+
+    <update id="updateClientConfirm">
+        UPDATE health_steward_contract
+        SET client_confirm = #{clientConfirm}
+        WHERE client_id = #{clientId} AND staff_id = #{staffId}
+    </update>
+
+    <update id="updateStaffConfirm">
+        UPDATE health_steward_contract
+        SET staff_confirm = #{staffConfirm}
+        WHERE client_id = #{clientId} AND staff_id = #{staffId}
+    </update>
+
+    <update id="updateContractLinkByMap" parameterType="HashMap">
+        UPDATE health_steward_contract
+        SET
+        <if test="_parameter.containsKey('clientConfirm')">
+          client_confirm = #{clientConfirm}
+        </if>
+        <if test="_parameter.containsKey('staffConfirm')">
+          staff_confirm = #{staffConfirm}
+        </if>
+        <if test="_parameter.containsKey('contractState')">
+          , contract_state = #{contractState}
+        </if>
+        <if test="_parameter.containsKey('resultComment') and _parameter.containsKey('resultTimeStamp')">
+          , result_comment = #{resultComment}, result_time_stamp = #{resultTimeStamp}
+        </if>
+        <if test="_parameter.containsKey('managedState')">
+          , managed_state = #{managedState}
+        </if>
+        WHERE client_id = #{clientId} AND staff_id = #{staffId}
+    </update>
+
+    <select id="getContractLink" resultType="ContractLink">
+        select
+        <include refid="contractLinkProps"/>
+        from health_steward_contract
+        where client_Id = #{clientId}
+        <if test="staffId!=null"> AND staff_id = #{staffId}</if>
+    </select>
+
+    <select id="listContractLink" resultType="ContractLink" parameterType="Integer">
+        select
+        <include refid="contractLinkProps"/>
+        from health_steward_contract
+        where staff_id = #{staffId} AND managed_state != 1
+    </select>
+
+    <select id="listValidSignedClients" resultType="ContractLink" parameterType="Integer">
+        select
+        <include refid="contractLinkProps"/>
+        from health_steward_contract
+        where staff_id = #{staffId} AND managed_state = 1 AND contract_state = 1
+    </select>
+
+</mapper>
