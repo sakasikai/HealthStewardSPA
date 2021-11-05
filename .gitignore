@@ -27,6 +27,7 @@ hs_err_pid*
 /backend/target
 
 /frontend-client/.idea
+/frontend-client/.vscode
 /frontend-client/.quasar
 /frontend-client/node_modules
 
