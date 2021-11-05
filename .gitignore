@@ -21,3 +21,16 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+/backend/.idea
+/backend/target
+
+/frontend-client/.idea
+/frontend-client/.quasar
+/frontend-client/node_modules
+
+/frontend-staff/.idea
+/frontend-staff/.quasar
+/frontend-staff/node_modules
+/doc
